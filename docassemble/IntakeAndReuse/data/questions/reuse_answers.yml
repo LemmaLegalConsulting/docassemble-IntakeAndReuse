@@ -1,0 +1,96 @@
+---
+include:
+  - docassemble.AssemblyLine:assembly_line.yml
+---
+features:
+  use catchall: True
+---
+mandatory: True
+code: |
+  template_to_fill  
+  if not start_fresh:
+    load_existing_answers
+  download_template
+---
+id: upload template
+question: |
+  Upload a template to fill in
+subquestion: |
+  You can select an existing set of answers, like from an intake interview, to use 
+  to complete the template. If you add new fields to the template,
+  you will get a very basic chance to provide an answer to the new field.
+fields:
+  - Upload a DOCX template file: template_to_fill
+    datatype: file
+    accept: |
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+---
+id: choose an answer set
+question: |
+  Choose an answer set
+fields:
+  - Start fresh: start_fresh
+    datatype: yesno
+    disable others: True
+  - Select one: selected_answers
+    datatype: combobox
+    code: |
+      [{idx: answer.title} for idx, answer in enumerate(all_answer_sets)]
+    required: False      
+---
+id: download template
+event: download_template
+question: |
+  Your template is ready
+attachment: 
+  docx template file:
+    code: |
+      template_to_fill[0]
+---
+code: |
+  all_answer_sets = get_saved_interview_list(filename="docassemble.AssemblyLine:al_saved_sessions_store.yml", user_id="all", exclude_newly_started_sessions=False)
+---
+code: |
+  load_interview_answers(all_answer_sets[int(selected_answers)].filename, all_answer_sets[int(selected_answers)].key) 
+  load_existing_answers = True
+---
+###################### Catchall questions ###########################################
+---
+generic object: DACatchAll
+question: |
+  What is ${ x.object_name() }?
+fields:
+  - no label: x.value
+validation code: |
+  define(x.instanceName, x.value)
+---
+if: |
+  x.context == 'float'
+generic object: DACatchAll
+question: |
+  How much is ${ x.object_name() }?
+fields:
+  - Amount: x.value
+    datatype: currency
+validation code: |
+  define(x.instanceName, x.value)
+---
+if: |
+  x.data_type_guess() == 'bool'
+generic object: DACatchAll
+question: |
+  ${x.object_name()}?
+yesno: x.value
+validation code: |
+  define(x.instanceName, x.value)
+---
+if: |
+  x.object_name().endswith('date')
+generic object: DACatchAll
+question: |
+  ${x.object_name()}?
+fields:
+  - Date: x.value
+    datatype: date
+validation code: |
+  define(x.instanceName, x.value)

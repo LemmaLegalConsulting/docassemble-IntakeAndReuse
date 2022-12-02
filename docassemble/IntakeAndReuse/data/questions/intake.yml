@@ -1,0 +1,34 @@
+---
+include:
+  - docassemble.AssemblyLine:assembly_line.yml
+---
+metadata:
+  title: |
+    New client questionnaire
+---
+mandatory: True
+code: |
+  users[0].name.first
+  users[0].address.address
+  children.gather()
+  why_want_to_meet
+  answers_saved
+  outro_message
+---
+code: |
+  # The user's answers are saved to the "saved session" area
+  save_interview_answers(filename="docassemble.AssemblyLine:al_saved_sessions_store.yml", metadata = {"title": str(users) } )
+  answers_saved = True
+---
+id: welcome
+question: |
+  New client questionnaire
+subquestion: |
+  Tell us a little about yourself before our first meeting.
+fields:
+  - What do you want to meet with us about?: why_want_to_meet
+    datatype: area
+---
+event: outro_message
+question: |
+  Thanks, we will be in touch!
