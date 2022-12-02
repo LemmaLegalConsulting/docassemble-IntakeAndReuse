@@ -8,10 +8,10 @@ metadata:
 ---
 mandatory: True
 code: |
+  why_want_to_meet
   users[0].name.first
   users[0].address.address
   children.gather()
-  why_want_to_meet
   answers_saved
   outro_message
 ---
