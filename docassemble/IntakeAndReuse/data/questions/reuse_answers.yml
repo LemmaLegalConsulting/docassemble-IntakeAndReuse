@@ -2,6 +2,10 @@
 include:
   - docassemble.AssemblyLine:assembly_line.yml
 ---
+metadata:
+  title: |
+    Fill in the blanks
+---
 features:
   use catchall: True
 ---
@@ -48,7 +52,10 @@ attachment:
       template_to_fill[0]
 ---
 code: |
-  all_answer_sets = get_saved_interview_list(filename="docassemble.AssemblyLine:al_saved_sessions_store.yml", user_id="all", exclude_newly_started_sessions=False)
+  if user_has_privilege(['developer', 'admin']):
+    all_answer_sets = get_saved_interview_list(filename="docassemble.AssemblyLine:al_saved_sessions_store.yml", user_id="all", exclude_newly_started_sessions=False)
+  else:
+    all_answer_sets = get_saved_interview_list(filename="docassemble.AssemblyLine:al_saved_sessions_store.yml", exclude_newly_started_sessions=False)
 ---
 code: |
   load_interview_answers(all_answer_sets[int(selected_answers)].filename, all_answer_sets[int(selected_answers)].key) 
