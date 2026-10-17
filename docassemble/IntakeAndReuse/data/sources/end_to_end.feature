@@ -14,5 +14,6 @@ Feature: Complete IntakeAndReuse interview
       | users[0].address.city | Boston |
       | users[0].address.state | MA |
       | users[0].address.zip | 02108 |
+      | users.there_is_another | False |
       | children.there_are_any | False |
     Then I should see the phrase "Thanks, we will be in touch!"
